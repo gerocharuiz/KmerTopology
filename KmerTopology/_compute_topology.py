@@ -26,15 +26,22 @@ def compute_filtration_topology(positions, step_size, max_step):
         
 
     '''
+    #Lista de las posiciones en las que aparece un kmer dado
+    #en el string del gen
     positions = positions[positions> 0]  #only keep the nonzero entry
+    #Matriz de distancias, cero en todos los valores
     D = np.zeros([positions.shape[0], positions.shape[0]])
     for idx in range(positions.shape[0]):
         for idx2 in range(idx+1, positions.shape[0]):
+            #Llena la matriz de distancias de las posiciones
             D[idx, idx2] = positions[idx2] - positions[idx]
             D[idx2, idx] = positions[idx2] - positions[idx]
+    #Lista de los números de betti y eigenvalor minímo
+    #con el que llenaremos cada filtración
     betti = []
     eig_min = []
     filtration = np.linspace(0, step_size*max_step, max_step)
+    #Llenamos el laplaciano persistente para cada filtración
     for idx, s in enumerate(filtration):
         if s == 0:
             eig = np.zeros(D.shape[0])
@@ -42,9 +49,12 @@ def compute_filtration_topology(positions, step_size, max_step):
             A = D.copy()
             A[A>s] = 0
             A[A!=0] = 1
+            #Laplaciano
             L = np.diag(np.sum(A,axis = 0)) - A
+            #Eigenvalores
             eig = np.linalg.eigvalsh(L)
         numzero = np.where(eig <1e-6)[0].shape[0]
+        #Numero de bettit
         betti.append(numzero)
         if numzero == len(eig):
             eig_min.append(0)

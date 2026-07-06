@@ -8,6 +8,7 @@ import numpy as np
 from KmerTopology._extract_kmers import find_kmers_position
 from KmerTopology._compute_topology import compute_kmers_persistent_diagram, compute_kmers_betti, compute_filtration_topology
 
+#Para un gen dado, k tamaño, paso de la filtración, y máximo de filtraciones
 def KmerHomology(sequence, kmers_size, step_size, max_step):
     
     kmers_list, kmers_positions = find_kmers_position(sequence, kmers_size)
@@ -26,7 +27,8 @@ def KmerHomology(sequence, kmers_size, step_size, max_step):
     betti_features = np.concatenate(betti_features)
     return betti_features
 
-
+#Regresa los vectores tpologicos de k, cada filtración
+#y de toda la lista de vectores
 def KmerTopology(sequence, kmers_size, step_size, max_step):
     
     kmers_list, kmers_positions = find_kmers_position(sequence, kmers_size)

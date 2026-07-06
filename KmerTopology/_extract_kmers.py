@@ -37,12 +37,17 @@ def find_kmers_position(sequence, kmers_size):
     kmers_list = get_kmers_como(kmers_size)
     length_seq = len(sequence) - kmers_size + 1
     
-    
+    #Crea la lista de listas de indices en los que aparece
+    #cada substring de tamaño k.
     kmers_pos = { k: [] for k in kmers_list  }
     for idx in range(length_seq):
+        #kmer formado de indx a indx+k
         s = sequence[idx:idx+kmers_size]
+        #Agregamos el indice al kmer que le peretenece
         if s in kmers_list:
             kmers_pos[s].append(idx+1)
+        #Obeservamos que este caso sólo es en caso de que no
+        #no sean A,C,G o T
         else:
             print(s, 'not valid dna')  #<- comment this out if you dont want this message. Won't affect your result.
         

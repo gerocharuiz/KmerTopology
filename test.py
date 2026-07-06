@@ -5,7 +5,7 @@ Created on Sun Apr 27 15:57:04 2025
 @author: yutah
 """
 import numpy as np
-from kmer_topology import KmerTopology, KmerHomology
+from KmerTopology.kmer_topology import KmerTopology, KmerHomology
 
 length_seq = 1000
 sequence = np.random.choice(['A', 'C', 'G', 'T'], length_seq)
@@ -15,6 +15,11 @@ step = np.arange(50)
 kmers_size = 2
 kmers = 'A'
 
-
+num_filt = 50/4
 b, e = KmerTopology(sequence, 2, 4, 50)
+for i in range(len(b)):
+    print(f" {b[i]} ", end="")
+    if((i+1)%num_filt == 0):
+        print("\n")
+
 bb = KmerHomology(sequence, 2, 4, 50)
