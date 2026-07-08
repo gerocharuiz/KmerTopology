@@ -10,6 +10,12 @@ from scipy import sparse
 from gudhi.representations.vector_methods import BettiCurve
 import ripser
 
+"""
+Se da una lista de posiciones en los que aparece el kmer L, una filtracion de 0 a r_max
+Obtiene D. Y para cada r en 0 a r_max calcula L y sus B y Lambda asociados.
+Al final nos entreega los vecotres de caracteristicas topologicas para ese L y esa
+filtracion
+"""
 def compute_filtration_topology(positions, step_size, max_step):
     '''
         Compute all the eigenvalues associated with the filtration (step)
@@ -30,6 +36,7 @@ def compute_filtration_topology(positions, step_size, max_step):
     #en el string del gen
     positions = positions[positions> 0]  #only keep the nonzero entry
     #Matriz de distancias, cero en todos los valores
+    #Observas que solo se calcula una vez, no para todas r
     D = np.zeros([positions.shape[0], positions.shape[0]])
     for idx in range(positions.shape[0]):
         for idx2 in range(idx+1, positions.shape[0]):
@@ -40,8 +47,9 @@ def compute_filtration_topology(positions, step_size, max_step):
     #con el que llenaremos cada filtración
     betti = []
     eig_min = []
+    #Obtenemos todas las filtraciones
     filtration = np.linspace(0, step_size*max_step, max_step)
-    #Llenamos el laplaciano persistente para cada filtración
+    #Llenamos el laplaciano persistente para la filtracion dada
     for idx, s in enumerate(filtration):
         if s == 0:
             eig = np.zeros(D.shape[0])
@@ -60,6 +68,7 @@ def compute_filtration_topology(positions, step_size, max_step):
             eig_min.append(0)
         else:
             eig_min.append(eig[numzero])
+    #Regresamos los vectores topologicos
     return np.array(betti), np.array(eig_min)
 
 
