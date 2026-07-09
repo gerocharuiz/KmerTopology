@@ -1,5 +1,13 @@
-__pycache__/
+
+.~lock.escherichia.csv#
+
+#Ignorar Python cache
 *.pyc
 *.egg-info/
-.~lock.escherichia.csv#
-ipynb_checkpoints/
+.ipynb_checkpoints/
+
+#Ignorar Jupyeter Notebook
+.ipynb_checkpoints/
+
+#Ignorar data
+data/**/*.csv
