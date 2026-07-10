@@ -58,7 +58,7 @@ max_step = config["max_step"]
 #Diccionario de Secuencias
 secuences = {}
 
-for nombre in df["Sec. Completas"]:
+for nombre in df["name"]:
     ruta = carpeta_data / nombre
     secuence = list(SeqIO.parse(ruta, "fasta"))
     secuences[nombre] = (secuence[0].seq)
