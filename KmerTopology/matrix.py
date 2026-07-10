@@ -39,6 +39,7 @@ def create_matrix_vectors(secuences, kmers_size, step_size, max_step):
         )
         mat_B[i] = b
         mat_lambda[i] = e
+        #print(f"vect. topo de secuencia {i} calculado y guardado")
 
     return mat_B, mat_lambda
 
