@@ -1,0 +1,6 @@
+{
+	"mat_B":"data/processed/vectors_topB1.csv",
+	"mat_E":"data/processed/vectors_topE1.csv",
+	"mat_DB":"data/processed/distance_B.csv",
+	"mat_DE":"data/processed/distance_E.csv"
+}
