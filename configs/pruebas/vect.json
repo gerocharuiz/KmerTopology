@@ -1,5 +1,5 @@
 {
-	"genomes_dir": "data/raw",
+	"genomes_dir": "data/raw/genomes",
    	"csv_file": "data/processed/prueba.csv",
 	"mat_B":"data/processed/vectors_topB.csv",
 	"mat_E":"data/processed/vectors_topE.csv",
