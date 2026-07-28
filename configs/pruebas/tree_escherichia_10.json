@@ -1,0 +1,8 @@
+{
+	"mat_DB":"data/processed/distance_B_escherichia.csv",
+	"mat_DE":"data/processed/distance_E_escherichia.csv",
+	"nombres_csv":"data/processed/escherichia_10.csv",
+	"TreeB":"results/figures/pruebas/tree_B_escherichia.png",
+	"TreeE":"results/figures/pruebas/tree_E_escherichia.png"
+}
+ 

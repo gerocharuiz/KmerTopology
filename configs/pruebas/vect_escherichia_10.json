@@ -1,0 +1,9 @@
+{
+	"genomes_dir": "/files2/generic-amr/data/genomes",
+   	"csv_file": "data/processed/escherichia_10.csv",
+	"mat_B":"data/processed/vectors_topB_escherichia.csv",
+	"mat_E":"data/processed/vectors_topE_escherichia.csv",
+	"kmer_size": 4,
+	"step_size": 4,
+    	"max_step": 48
+}
