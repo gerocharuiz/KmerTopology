@@ -11,3 +11,6 @@
 
 #Ignorar data
 data/**/*.csv
+
+#Ignorar figuras
+results/**/*.png
