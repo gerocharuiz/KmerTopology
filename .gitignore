@@ -12,5 +12,8 @@
 #Ignorar data
 data/**/*.csv
 
+#Ignorar raw
+data/raw/
+
 #Ignorar figuras
 results/**/*.png
