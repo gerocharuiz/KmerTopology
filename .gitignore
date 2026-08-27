@@ -14,3 +14,9 @@ data/**/*.csv
 
 #Ignorar figuras
 results/**/*.png
+
+#Ignorar Platon
+data/raw/metadata/
+data/raw/platon_test/
+data/processed/
+data/raw/platon/
