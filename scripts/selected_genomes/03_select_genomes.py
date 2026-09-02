@@ -16,23 +16,34 @@ Casos por genoma:
                        k-mers aceptan multi-fasta por genoma); si prefieres
                        quedarte solo con el contig plasmidico mas largo
                        (heuristica de "plasmido probablemente mas completo"),
-                       usa --largest-only
+                       usa "largest_only": true en el config
 
 El fasta resultante para cada accession se copia/escribe en
-<final-dir>/<accession>.plasmid.fasta
+<final_dir>/<accession>.plasmid.fasta
 
-Uso:
-    python 03_build_plasmid_manifest.py \
-        --manifest selected_genomes.csv \
-        --platon-outdir platon_out \
-        --final-dir plasmid_contigs \
-        --out plasmid_manifest.csv
-        [--largest-only]
+Uso (config JSON, mismo estilo que run_pipeline.py / run_pipeline2.py / run_pipeline3.py):
+    python 03_build_plasmid_manifest.py config_manifest.json
+
+Donde config_manifest.json luce asi (solo "manifest" y "platon_outdir" son
+obligatorias):
+{
+    "manifest": "selected_genomes.csv",
+    "platon_outdir": "platon_out",
+    "final_dir": "plasmid_contigs",
+    "out": "plasmid_manifest.csv",
+    "largest_only": false
+}
+
+Nota: si dejas "largest_only": false aqui, run_pipeline.py (script 1 de tu
+pipeline de KmerTopology) puede encargarse de quedarse con el contig mas
+largo de cada fasta el momento de vectorizar -- ver su modo
+"plasmid_manifest" en el config.
 """
-import argparse
 import csv
+import json
 import os
-import shutil
+import sys
+from pathlib import Path
 
 
 def parse_fasta(path):
@@ -66,28 +77,29 @@ def write_fasta(records, path):
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--manifest", required=True,
-                     help="CSV de salida de 01_select_genomes.py")
-    ap.add_argument("--platon-outdir", required=True,
-                     help="Directorio de salida de 02_run_platon_batch.py")
-    ap.add_argument("--final-dir", default="plasmid_contigs",
-                     help="Donde se escriben los fasta finales, uno por accession")
-    ap.add_argument("--out", default="plasmid_manifest.csv")
-    ap.add_argument("--largest-only", action="store_true",
-                     help="Si un genoma tiene varios contigs plasmidicos, "
-                          "quedarse solo con el mas largo en vez de concatenarlos todos")
-    args = ap.parse_args()
+    if len(sys.argv) != 2:
+        print("Uso: python 03_build_plasmid_manifest.py config.json", file=sys.stderr)
+        sys.exit(1)
 
-    os.makedirs(args.final_dir, exist_ok=True)
+    config_file = Path(sys.argv[1])
+    with open(config_file, encoding="utf-8") as f:
+        config = json.load(f)
 
-    with open(args.manifest, newline="", encoding="utf-8") as f:
+    manifest = config["manifest"]
+    platon_outdir = config["platon_outdir"]
+    final_dir = config.get("final_dir", "plasmid_contigs")
+    out = config.get("out", "plasmid_manifest.csv")
+    largest_only = bool(config.get("largest_only", False))
+
+    os.makedirs(final_dir, exist_ok=True)
+
+    with open(manifest, newline="", encoding="utf-8") as f:
         rows = [r for r in csv.DictReader(f) if r["found"] in ("True", "true", "1")]
 
     out_rows = []
     for row in rows:
         accession = row["accession"]
-        plasmid_fasta = os.path.join(args.platon_outdir, accession, f"{accession}.plasmid.fasta")
+        plasmid_fasta = os.path.join(platon_outdir, accession, f"{accession}.plasmid.fasta")
 
         if not os.path.isfile(plasmid_fasta) or os.path.getsize(plasmid_fasta) == 0:
             out_rows.append({
@@ -106,12 +118,12 @@ def main():
             final_path = ""
         elif n_contigs == 1:
             status = "single_contig"
-            final_path = os.path.join(args.final_dir, f"{accession}.plasmid.fasta")
+            final_path = os.path.join(final_dir, f"{accession}.plasmid.fasta")
             write_fasta(records, final_path)
         else:
             status = "multi_contig"
-            final_path = os.path.join(args.final_dir, f"{accession}.plasmid.fasta")
-            if args.largest_only:
+            final_path = os.path.join(final_dir, f"{accession}.plasmid.fasta")
+            if largest_only:
                 largest = max(records, key=lambda r: len(r[1]))
                 write_fasta([largest], final_path)
                 total_bp = len(largest[1])
@@ -126,7 +138,8 @@ def main():
             "status": status, "final_fasta_path": final_path,
         })
 
-    with open(args.out, "w", newline="", encoding="utf-8") as f:
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f, fieldnames=["accession", "phenotype", "n_plasmid_contigs",
                            "total_plasmid_bp", "status", "final_fasta_path"])
@@ -139,8 +152,8 @@ def main():
     print(f"Genomas sin plasmido detectado: {n_none}")
     print(f"Genomas con 1 contig plasmidico: {n_single}")
     print(f"Genomas con >1 contig plasmidico: {n_multi}")
-    print(f"Manifiesto final: {args.out}")
-    print(f"Fastas listos para KmerTopology en: {args.final_dir}/")
+    print(f"Manifiesto final: {out}")
+    print(f"Fastas listos para KmerTopology en: {final_dir}/")
 
 
 if __name__ == "__main__":

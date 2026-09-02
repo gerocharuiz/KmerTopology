@@ -1,0 +1,7 @@
+{
+    "metadata": "data/raw/metadata/pangenome.metadata.csv",
+    "fna_dir": "/files2/generic-amr/data/genomes",
+    "species": "Escherichia coli",
+    "antibiotic": "ciprofloxacin",
+    "out": "data/processed/selected_genomes.csv"
+}

@@ -1,0 +1,9 @@
+{
+    "manifest": "data/processed/selected_genomes/selected_genomes.csv",
+    "platon_db": "data/raw/platon/db",
+    "outdir": "data/processed/selected_genomes/platon_out",
+    "threads": 8,
+    "limit": 20,
+    "mode": "sensitivity",
+    "log": "data/processed/selected_genomes/platon_run_log.csv"
+}

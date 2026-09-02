@@ -11,18 +11,25 @@ este script exige (o renombra simbólicamente) que cada .fna se llame
 "<accession>.fna" -- así el nombre de salida de Platon coincide con el
 accession y el script 03 puede volver a asociarlos sin ambigüedad.
 
-Uso:
-    python 01_select_genomes.py \
-        --metadata pangenome_metadata.csv \
-        --fna-dir /ruta/a/mis/fnas \
-        --species "Escherichia coli" \
-        --antibiotic ciprofloxacin \
-        --out selected_genomes.csv
+Uso (config JSON, mismo estilo que run_pipeline.py / run_pipeline2.py / run_pipeline3.py):
+    python 01_select_genomes.py config_select.json
+
+Donde config_select.json luce asi (todas las llaves menos "metadata" y
+"fna_dir" son opcionales):
+{
+    "metadata": "pangenome_metadata.csv",
+    "fna_dir": "/ruta/a/mis/fnas",
+    "species": "Escherichia coli",
+    "antibiotic": "ciprofloxacin",
+    "dataset": null,
+    "out": "selected_genomes.csv"
+}
 """
-import argparse
 import csv
+import json
 import os
 import sys
+from pathlib import Path
 
 
 def find_fna(accession: str, fna_dir: str) -> str | None:
@@ -35,38 +42,40 @@ def find_fna(accession: str, fna_dir: str) -> str | None:
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--metadata", required=True, help="pangenome_metadata.csv")
-    ap.add_argument("--fna-dir", required=True,
-                     help="Directorio donde ya tienes descargados los .fna")
-    ap.add_argument("--species", default=None,
-                     help="Filtra por columna 'species' (match exacto). Ej: 'Escherichia coli'")
-    ap.add_argument("--antibiotic", default=None,
-                     help="Filtra por columna 'antibiotic' (match exacto). Ej: ciprofloxacin")
-    ap.add_argument("--dataset", default=None,
-                     help="Filtra por columna 'dataset' si quieres solo train/test de un corte")
-    ap.add_argument("--out", default="selected_genomes.csv")
-    args = ap.parse_args()
+    if len(sys.argv) != 2:
+        print("Uso: python 01_select_genomes.py config.json", file=sys.stderr)
+        sys.exit(1)
+
+    config_file = Path(sys.argv[1])
+    with open(config_file, encoding="utf-8") as f:
+        config = json.load(f)
+
+    metadata = config["metadata"]
+    fna_dir = config["fna_dir"]
+    species = config.get("species")
+    antibiotic = config.get("antibiotic")
+    dataset = config.get("dataset")
+    out = config.get("out", "selected_genomes.csv")
 
     n_total = 0
     n_kept = 0
     n_found = 0
     rows_out = []
 
-    with open(args.metadata, newline="", encoding="utf-8") as f:
+    with open(metadata, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             n_total += 1
-            if args.species and row["species"] != args.species:
+            if species and row["species"] != species:
                 continue
-            if args.antibiotic and row["antibiotic"] != args.antibiotic:
+            if antibiotic and row["antibiotic"] != antibiotic:
                 continue
-            if args.dataset and args.dataset not in row["dataset"].split():
+            if dataset and dataset not in row["dataset"].split():
                 continue
             n_kept += 1
 
             accession = row["accession"]
-            fna_path = find_fna(accession, args.fna_dir)
+            fna_path = find_fna(accession, fna_dir)
             if fna_path:
                 n_found += 1
 
@@ -80,7 +89,8 @@ def main():
                 "found": bool(fna_path),
             })
 
-    with open(args.out, "w", newline="", encoding="utf-8") as f:
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=["accession", "species", "antibiotic", "phenotype",
@@ -93,10 +103,10 @@ def main():
     print(f"Filas que pasan el filtro:      {n_kept}")
     print(f"  .fna localizados:             {n_found}")
     print(f"  .fna faltantes:               {n_kept - n_found}")
-    print(f"Manifiesto escrito en:          {args.out}")
+    print(f"Manifiesto escrito en:          {out}")
 
     if n_kept - n_found > 0:
-        print("\nATENCION: hay accessions sin .fna encontrado en --fna-dir.",
+        print("\nATENCION: hay accessions sin .fna encontrado en fna_dir.",
               file=sys.stderr)
         print("Revisa que el nombre de archivo sea exactamente <accession>.fna",
               file=sys.stderr)
@@ -104,3 +114,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -1,0 +1,6 @@
+{
+	"mat_B":"data/processed/selected_genomes/vectors_topB_escherichia.csv",
+	"mat_E":"data/processed/selected_genomes/vectors_topE_escherichia.csv",
+	"mat_DB":"data/processed/selected_genomes/distance_B_escherichia.csv",
+	"mat_DE":"data/processed/selected_genomes/distance_E_escherichia.csv"
+}

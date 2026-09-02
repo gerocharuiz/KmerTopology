@@ -1,0 +1,12 @@
+{
+    "plasmid_manifest": "data/processed/selected_genomes/plasmid_manifest.csv",
+    "n_genomes": 20,
+    "seed": 42,
+    "names_out": "data/processed/selected_genomes/escherichia_plasmid_20.csv",
+    "mat_B": "data/processed/selected_genomes/vectors_topB_escherichia.csv",
+    "mat_E": "data/processed/selected_genomes/vectors_topE_escherichia.csv",
+    "kmer_size": 2,
+    "step_size": 4,
+    "max_step": 48
+}
+
