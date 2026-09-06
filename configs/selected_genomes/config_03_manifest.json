@@ -1,7 +1,7 @@
 {
-    "manifest": "data/processed/selected_genomes/selected_genomes.csv",
-    "platon_outdir": "data/processed/selected_genomes/platon_out",
-    "final_dir": "data/processed/selected_genomes/plasmid_contigs",
-    "out": "data/processed/selected_genomes/plasmid_manifest.csv",
+    "manifest": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/selected_genomes.csv",
+    "platon_outdir": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/platon_out",
+    "final_dir": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/plasmid_contigs",
+    "out": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/plasmid_manifest.csv",
     "largest_only": false
 }

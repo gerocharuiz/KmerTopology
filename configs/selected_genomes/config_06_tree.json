@@ -1,8 +1,8 @@
 {
-	"mat_DB":"data/processed/selected_genomes/distance_B_escherichia.csv",
-	"mat_DE":"data/processed/selected_genomes/distance_E_escherichia.csv",
-	"nombres_csv":"data/processed/escherichia_10.csv",
-	"TreeB":"results/figures/selected_genomes/tree_B_escherichia.png",
-	"TreeE":"results/figures/selected_genomes/tree_E_escherichia.png"
+	"mat_DB":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/distance_B_escherichia.csv",
+	"mat_DE":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/distance_E_escherichia.csv",
+	"nombres_csv":"/files2/gerardo/KmerTopology/data/processed/escherichia_10.csv",
+	"TreeB":"/files2/gerardo/KmerTopology/results/figures/selected_genomes/tree_B_escherichia.png",
+	"TreeE":"/files2/gerardo/KmerTopology/results/figures/selected_genomes/tree_E_escherichia.png"
 }
  

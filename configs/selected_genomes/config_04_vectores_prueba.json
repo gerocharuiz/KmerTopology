@@ -1,0 +1,12 @@
+{
+    "plasmid_manifest": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/plasmid_manifest_prueba.csv",
+    "n_genomes": 1,
+    "seed": 42,
+    "names_out": "/files2/gerardo/KmerTopology/data/processed/pruebas/escherichia_plasmid_1.csv",
+    "mat_B": "/files2/gerardo/KmerTopology/data/processed/pruebas/vectors_topB_prueba.csv",
+    "mat_E": "/files2/gerardo/KmerTopology/data/processed/pruebas/vectors_topE_prueba.csv",
+    "kmer_size": 2,
+    "step_size": 4,
+    "max_step": 48
+}
+
