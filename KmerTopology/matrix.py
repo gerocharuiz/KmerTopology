@@ -22,6 +22,7 @@ Autor: Gerardo Rocha Ruiz Jr
 import numpy as np
 import pandas as pd
 from pathlib import Path
+import time
 from KmerTopology.kmer_topology import KmerTopology, KmerHomology
 
 #Lista de las secuencias, tamanio de los kmers, filtracion
@@ -82,7 +83,8 @@ def create_safe_matrix_vectors(
 
         for i, sequence in enumerate(secuences):
             print(f"Longitud de la secuencia {len(sequence)}")
-            
+
+            t0 = time.time()
             b, e = KmerTopology(
                 sequence=sequence,
                 kmers_size=kmers_size,
@@ -99,7 +101,7 @@ def create_safe_matrix_vectors(
             f_lambda.flush()
 
             print(f"[{i + 1:>3}/{n}] Vector topológico calculado")
-
+            print(f"{time.time()-t0:.1f} s por secuencia")
 
     print("\nProceso terminado.")
 

@@ -39,6 +39,16 @@ ROOT = Path.cwd()
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+import os
+n_cpus = os.cpu_count() or 1
+max_threads = max(1, n_cpus // 2)
+
+os.environ["OMP_NUM_THREADS"] = str(max_threads)
+os.environ["OPENBLAS_NUM_THREADS"] = str(max_threads)
+os.environ["MKL_NUM_THREADS"] = str(max_threads)
+os.environ["VECLIB_MAXIMUM_THREADS"] = str(max_threads)
+os.environ["NUMEXPR_NUM_THREADS"] = str(max_threads)
+
 import numpy as np
 import pandas as pd
 import json
@@ -114,10 +124,13 @@ list_secuences = list(secuences.values())
 
 secuence = list_secuences[0]
 
+"""
 import time
 t0 = time.time()
 b, e = KmerTopology(sequence = secuence, kmers_size = kmers_size, step_size = step_size, max_step=max_step)
 print(f"{time.time()-t0:.1f} s por secuencia")
+"""
+
 
 #Vectores topologicos de cada genoma
 create_safe_matrix_vectors(
@@ -126,5 +139,6 @@ create_safe_matrix_vectors(
     step_size = step_size, 
     max_step = max_step,
     ruta_B = ruta_matB, 
+    
     ruta_lambda = ruta_matE
 )
