@@ -30,8 +30,8 @@ de los genomas
 """
 ruta_matB = Path(config["mat_B"])
 ruta_matE = Path(config["mat_E"])
-df_B = pd.read_csv(ruta_matB)
-df_E = pd.read_csv(ruta_matE)
+df_B = pd.read_csv(ruta_matB, header=None)
+df_E = pd.read_csv(ruta_matE, header=None)
 
 
 # Ruta y nombres con los que se guadaran las matrices de distancia
