@@ -1,0 +1,11 @@
+{
+    "vectors": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/vectors_topB_prueba.csv",
+    "names_csv": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/escherichia_plasmid_30.csv",
+    "labels_manifest": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/plasmid_manifest.csv",
+    "n_components": 3,
+    "scale_features": true,
+    "annotate_points": false,
+    "seed": 42,
+    "out_dir": "/files2/gerardo/KmerTopology/results/knn/selected_genomes",
+    "prefix": "pca_prueba"
+}
