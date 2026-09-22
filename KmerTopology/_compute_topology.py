@@ -7,13 +7,15 @@ Created on Sun Apr 27 15:03:58 2025
 
 import numpy as np
 from scipy import sparse
+from scipy.sparse.csgraph import connected_components
+from scipy.space.linalg import eigsh
 from gudhi.representations.vector_methods import BettiCurve
 import ripser
 
 """
 Se da una lista de posiciones en los que aparece el kmer L, una filtracion de 0 a r_max
-Obtiene D. Y para cada r en 0 a r_max calcula L y sus B y Lambda asociados.
-Al final nos entreega los vecotres de caracteristicas topologicas para ese L y esa
+Obtiene aristas. Y para cada r en 0 a r_max calcula L y sus B y Lambda asociados.
+Al final nos entrega los vecotres de caracteristicas topologicas para ese L y esa
 filtracion
 """
 def compute_filtration_topology(positions, step_size, max_step):
@@ -32,46 +34,123 @@ def compute_filtration_topology(positions, step_size, max_step):
         
 
     '''
-    #Lista de las posiciones en las que aparece un kmer dado
-    #en el string del gen
+
+    """
+    Lista de posiciones en las que aparece el kmer dado en el genoma,
+    notemos que esta ordenado
+    """
     positions = positions[positions> 0]  #only keep the nonzero entry
-    #Matriz de distancias, cero en todos los valores
-    #Observas que solo se calcula una vez, no para todas r
-    D = np.zeros([positions.shape[0], positions.shape[0]])
-    for idx in range(positions.shape[0]):
-        for idx2 in range(idx+1, positions.shape[0]):
-            #Llena la matriz de distancias de las posiciones
-            D[idx, idx2] = positions[idx2] - positions[idx]
-            D[idx2, idx] = positions[idx2] - positions[idx]
-    #Lista de los números de betti y eigenvalor minímo
-    #con el que llenaremos cada filtración
-    betti = []
-    eig_min = []
+    positions = np.sort(positions)
+    #Numero de posiciones
+    n = positions.shape[0]
+
     #Obtenemos todas las filtraciones
     filtration = np.linspace(0, step_size*max_step, max_step)
-    #Llenamos el laplaciano persistente para la filtracion dada
-    for idx, s in enumerate(filtration):
+    betti = np.zeros(max_step, dtype=int)
+    eig_min = np.zeros(max_step, dtype=int)
+
+    if n == 0:
+        return betti, eig_min
+    if n == 1:
+        return betti, eig_min
+
+    #La mayor filtracion posible
+    max_threshold = filtration[-1]
+    
+        # --- Construccion de aristas sin matriz de distancias densa ---
+    upper = np.searchsorted(positions, positions + max_threshold, side='right')
+    upper = np.minimum(upper, n)
+
+    # Para guardar las aristas
+    rows_chunks, cols_chunks, w_chunks = [], [], []
+    # Recorremos cada posicion
+    for i in range(n):
+        # Para la posicion i nos dice hasta donde podemos llegar
+        j_hi = upper[i]
+        #Si exiten posiciones a las que podemos llegar
+        if j_hi > i + 1:
+            # Agarra a las posciones posibles
+            js = np.arange(i + 1, j_hi)
+            # Guarda las aristas
+            rows_chunks.append(np.full(js.shape[0], i, dtype=np.int64))
+            cols_chunks.append(js.astype(np.int64))
+            # Guardamos las distancias
+            w_chunks.append(positions[js] - positions[i])
+
+    if not rows_chunks:
+        # Ninguna posicion queda dentro del umbral maximo de nadie mas:
+        # todos los nodos son su propia componente en toda la filtracion
+        betti[:] = n
+        return betti, eig_min
+
+    # Gardamos todas las aristas y pesos
+    rows = np.concatenate(rows_chunks)
+    cols = np.concatenate(cols_chunks)
+    weights = np.concatenate(w_chunks)
+
+    for k, s in enumerate(filtration):
+        # Si no existen filtraciones
         if s == 0:
-            eig = np.zeros(D.shape[0])
-        else:
-            A = D.copy()
-            A[A>s] = 0
-            A[A!=0] = 1
-            #Laplaciano
-            L = np.diag(np.sum(A,axis = 0)) - A
-            #Eigenvalores
-            eig = np.linalg.eigvalsh(L)
-        numzero = np.where(eig <1e-6)[0].shape[0]
-        #Numero de bettit
-        betti.append(numzero)
-        if numzero == len(eig):
-            eig_min.append(0)
-        else:
-            eig_min.append(eig[numzero])
-    #Regresamos los vectores topologicos
-    return np.array(betti), np.array(eig_min)
+            betti[k] = n
+            eig_min[k] = 0
+            continue
 
+        #Nos fijamos en que aristas cumplen con estar a distancia menor a s
+        mask = weights <= s
+        if not np.any(mask):
+            betti[k] = n
+            eig_min[k] = 0
+            continue
 
+        # Matriz de adayacencia con mascaras booleanas
+        r, c = rows[mask], cols[mask]
+
+        # Matriz de adyacencia dispersa y simetrica (nunca se materializa D)
+        A = sparse.coo_matrix(
+            (np.ones(2 * r.shape[0]),
+             (np.concatenate([r, c]), np.concatenate([c, r]))),
+            shape=(n, n)
+        ).tocsr()
+
+        n_comp, labels = connected_components(A, directed=False)
+        betti[k] = n_comp
+
+        # Laplaciano
+        deg = np.asarray(A.sum(axis=1)).flatten()
+        L = (sparse.diags(deg) - A).tocsr()
+
+        # eig_min = menor eigenvalor positivo entre TODAS las componentes
+        # conexas. Pedir globalmente los (n_comp+1) eigenvalores mas chicos
+        # es inviable cuando hay muchas componentes (n_comp puede ser miles).
+        # En cambio, como no hay aristas entre componentes distintas, el
+        # Laplaciano es block-diagonal: basta resolver, POR COMPONENTE, un
+        # problema de eigenvalores chico (k=2: el 0 y el siguiente), y
+        # tomar el minimo de esos "Fiedler values" sobre todas las
+        # componentes no triviales. Esto es exacto, no una aproximacion.
+        best = None
+        for comp_id in np.unique(labels):
+            idx = np.where(labels == comp_id)[0]
+            if idx.shape[0] < 2:
+                continue  # nodo aislado: no aporta eigenvalor positivo
+            Lc = L[idx][:, idx]
+            if idx.shape[0] <= 300:
+                vals_c = np.linalg.eigvalsh(Lc.toarray())
+            else:
+                try:
+                    vals_c = eigsh(Lc.asfptype(), k=2, sigma=-1e-8,
+                                   which='LM', return_eigenvectors=False)
+                except Exception:
+                    vals_c = eigsh(Lc.asfptype(), k=2, which='SM',
+                                   return_eigenvectors=False)
+            vals_c = np.sort(vals_c)
+            vals_c = vals_c[vals_c > 1e-8]
+            if vals_c.shape[0] > 0:
+                cand = vals_c[0]
+                if best is None or cand < best:
+                    best = cand
+        eig_min[k] = best if best is not None else 0
+
+    return betti, eig_min
 
 def compute_kmers_persistent_diagram(positions, step_size, max_step):
     '''
