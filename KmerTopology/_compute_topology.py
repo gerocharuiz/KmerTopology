@@ -8,7 +8,7 @@ Created on Sun Apr 27 15:03:58 2025
 import numpy as np
 from scipy import sparse
 from scipy.sparse.csgraph import connected_components
-from scipy.space.linalg import eigsh
+from scipy.sparse.linalg import eigsh
 from gudhi.representations.vector_methods import BettiCurve
 import ripser
 
