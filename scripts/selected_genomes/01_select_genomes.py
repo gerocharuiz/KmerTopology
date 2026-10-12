@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+    #!/usr/bin/env python3
 """
 01_select_genomes.py
 
@@ -22,8 +22,15 @@ Donde config_select.json luce asi (todas las llaves menos "metadata" y
     "species": "Escherichia coli",
     "antibiotic": "ciprofloxacin",
     "dataset": null,
+    "mic_column": "mic",
     "out": "selected_genomes.csv"
 }
+
+"mic_column" (opcional, default "mic") es el nombre de la columna de MIC
+(concentracion minima inhibitoria) dentro de pangenome_metadata.csv. Se
+copia tal cual al manifiesto de salida junto con phenotype, para poder
+usarla mas adelante como variable a predecir en vez de la etiqueta
+categorica resistente/susceptible/intermedio.
 """
 import csv
 import json
@@ -55,11 +62,13 @@ def main():
     species = config.get("species")
     antibiotic = config.get("antibiotic")
     dataset = config.get("dataset")
+    mic_column = config.get("mic_column", "mic")
     out = config.get("out", "selected_genomes.csv")
 
     n_total = 0
     n_kept = 0
     n_found = 0
+    n_mic = 0
     rows_out = []
 
     with open(metadata, newline="", encoding="utf-8") as f:
@@ -79,12 +88,17 @@ def main():
             if fna_path:
                 n_found += 1
 
+            mic = row.get(mic_column, "")
+            if mic not in ("", None):
+                n_mic += 1
+
             rows_out.append({
                 "accession": accession,
                 "species": row["species"],
                 "antibiotic": row["antibiotic"],
                 "phenotype": row["phenotype"],
                 "adjusted_phenotype": row.get("adjusted_phenotype", ""),
+                "mic": mic,
                 "fna_path": fna_path or "",
                 "found": bool(fna_path),
             })
@@ -94,7 +108,7 @@ def main():
         writer = csv.DictWriter(
             f,
             fieldnames=["accession", "species", "antibiotic", "phenotype",
-                        "adjusted_phenotype", "fna_path", "found"],
+                        "adjusted_phenotype", "mic", "fna_path", "found"],
         )
         writer.writeheader()
         writer.writerows(rows_out)
@@ -103,6 +117,8 @@ def main():
     print(f"Filas que pasan el filtro:      {n_kept}")
     print(f"  .fna localizados:             {n_found}")
     print(f"  .fna faltantes:               {n_kept - n_found}")
+    print(f"  MIC ('{mic_column}') presente: {n_mic}")
+    print(f"  MIC faltante:                 {n_kept - n_mic}")
     print(f"Manifiesto escrito en:          {out}")
 
     if n_kept - n_found > 0:
@@ -111,7 +127,11 @@ def main():
         print("Revisa que el nombre de archivo sea exactamente <accession>.fna",
               file=sys.stderr)
 
+    if n_kept - n_mic > 0:
+        print(f"\nATENCION: hay accessions sin MIC en la columna '{mic_column}' "
+              f"de pangenome_metadata.csv. Si el nombre de tu columna de MIC es "
+              f"otro, ajusta 'mic_column' en el config.", file=sys.stderr)
+
 
 if __name__ == "__main__":
     main()
-
