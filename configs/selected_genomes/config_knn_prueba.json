@@ -5,8 +5,11 @@
     "n_neighbors": 1,
     "metric": "euclidean",
     "scale_features": true,
+    "cv_folds": 5,
+    "shuffle_folds": true,	
     "test_size": 0.25,
     "seed": 42,
+    "image_source": "aggregate",
     "out_dir": "/files2/gerardo/KmerTopology/results/knn/selected_genomes",
     "prefix": "knn_prueba",
     "annotate_points": false

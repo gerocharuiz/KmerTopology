@@ -1,0 +1,10 @@
+{
+    "genomes_dir": "/files2/generic-amr/data/genomes",
+    "csv_file": "/files2/gerardo/KmerTopology/data/processed/complete_genomes/complete_genomes.csv",
+    "mat_B": "/files2/gerardo/KmerTopology/data/processed/complete_genomes/vectors_topB.csv",
+    "mat_E": "/files2/gerardo/KmerTopology/data/processed/complete_genomes/vectors_topE.csv",
+    "kmer_size": 2,
+    "step_size": 5,
+    "max_step": 50
+}
+

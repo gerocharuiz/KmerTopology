@@ -1,0 +1,8 @@
+{
+	"mat_DB":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/distance_B_prueba.csv",
+	"mat_DE":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/distance_E_prueba.csv",
+	"nombres_csv":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/escherichia_plasmid_30.csv",
+	"TreeB":"/files2/gerardo/KmerTopology/results/figures/selected_genomes/tree_B_prueba.png",
+	"TreeE":"/files2/gerardo/KmerTopology/results/figures/selected_genomes/tree_E_prueba.png"
+}
+ 

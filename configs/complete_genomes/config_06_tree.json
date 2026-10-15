@@ -1,0 +1,8 @@
+{
+	"mat_DB":"/files2/gerardo/KmerTopology/data/processed/complete_genomes/distance_B.csv",
+	"mat_DE":"/files2/gerardo/KmerTopology/data/processed/complete_genomes/distance_E.csv",
+	"nombres_csv":"/files2/gerardo/KmerTopology/data/processed/complete_genomes/complete_genomes.csv",
+	"TreeB":"/files2/gerardo/KmerTopology/results/figures/complete_genomes/tree_B.png",
+	"TreeE":"/files2/gerardo/KmerTopology/results/figures/complete_genomes/tree_E.png"
+}
+ 

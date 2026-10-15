@@ -1,0 +1,6 @@
+{
+	"mat_B":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/vectors_topB_prueba.csv",
+	"mat_E":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/vectors_topE_prueba.csv",
+	"mat_DB":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/distance_B_prueba.csv",
+	"mat_DE":"/files2/gerardo/KmerTopology/data/processed/selected_genomes/distance_E_prueba.csv"
+}

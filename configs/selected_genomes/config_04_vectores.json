@@ -1,8 +1,8 @@
 {
     "plasmid_manifest": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/plasmid_manifest.csv",
-    "n_genomes": 30,
+    "n_genomes": 100,
     "seed": 42,
-    "names_out": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/escherichia_plasmid_20.csv",
+    "names_out": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/escherichia_plasmid_100.csv",
     "mat_B": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/vectors_topB_escherichia.csv",
     "mat_E": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/vectors_topE_escherichia.csv",
     "kmer_size": 2,

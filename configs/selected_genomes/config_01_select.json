@@ -3,5 +3,7 @@
     "fna_dir": "/files2/generic-amr/data/genomes",
     "species": "Escherichia coli",
     "antibiotic": "ciprofloxacin",
-    "out": "/files2/gerardo/KmerTopology/data/processed/selected_genomes.csv"
+    "dataset": null,
+    "mic_column": "mic",
+    "out": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/selected_genomes.csv"
 }

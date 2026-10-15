@@ -1,0 +1,7 @@
+{
+    "mat_DB": "/files2/gerardo/KmerTopology/data/processed/kmer_topology_k2_r5_max50/distance_B_escherichia.csv",
+    "mat_DE": "/files2/gerardo/KmerTopology/data/processed/kmer_topology_k2_r5_max50/distance_E_escherichia.csv",
+    "nombres_csv": "/files2/gerardo/KmerTopology/data/processed/kmer_topology_k2_r5_max50/escherichia_plasmid.csv",
+    "TreeB": "/files2/gerardo/KmerTopology/results/figures/kmer_topology_k2_r5_max50/tree_B_escherichia.png",
+    "TreeE": "/files2/gerardo/KmerTopology/results/figures/kmer_topology_k2_r5_max50/tree_E_escherichia.png"
+}

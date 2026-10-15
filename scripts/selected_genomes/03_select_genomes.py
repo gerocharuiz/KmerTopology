@@ -21,6 +21,11 @@ Casos por genoma:
 El fasta resultante para cada accession se copia/escribe en
 <final_dir>/<accession>.plasmid.fasta
 
+Ademas de "phenotype", ahora arrastra la columna "mic" (si esta presente
+en el manifiesto de entrada, ver "mic_column" en 01_select_genomes.py),
+para poder usar el MIC como variable a predecir mas adelante en vez de
+la etiqueta categorica resistente/susceptible/intermedio.
+
 Uso (config JSON, mismo estilo que run_pipeline.py / run_pipeline2.py / run_pipeline3.py):
     python 03_build_plasmid_manifest.py config_manifest.json
 
@@ -101,9 +106,11 @@ def main():
         accession = row["accession"]
         plasmid_fasta = os.path.join(platon_outdir, accession, f"{accession}.plasmid.fasta")
 
+        mic = row.get("mic", "")
+
         if not os.path.isfile(plasmid_fasta) or os.path.getsize(plasmid_fasta) == 0:
             out_rows.append({
-                "accession": accession, "phenotype": row["phenotype"],
+                "accession": accession, "phenotype": row["phenotype"], "mic": mic,
                 "n_plasmid_contigs": 0, "total_plasmid_bp": 0,
                 "status": "no_plasmid", "final_fasta_path": "",
             })
@@ -133,7 +140,7 @@ def main():
                 write_fasta(records, final_path)
 
         out_rows.append({
-            "accession": accession, "phenotype": row["phenotype"],
+            "accession": accession, "phenotype": row["phenotype"], "mic": mic,
             "n_plasmid_contigs": n_contigs, "total_plasmid_bp": total_bp,
             "status": status, "final_fasta_path": final_path,
         })
@@ -141,7 +148,7 @@ def main():
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
-            f, fieldnames=["accession", "phenotype", "n_plasmid_contigs",
+            f, fieldnames=["accession", "phenotype", "mic", "n_plasmid_contigs",
                            "total_plasmid_bp", "status", "final_fasta_path"])
         writer.writeheader()
         writer.writerows(out_rows)
