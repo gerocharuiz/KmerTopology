@@ -1,0 +1,11 @@
+{
+    "plasmid_manifest": "/files2/gerardo/KmerTopology/data/processed/selected_genomes/plasmid_manifest.csv",
+    "n_genomes": 300,
+    "seed": 42,
+    "names_out": "/files2/gerardo/KmerTopology/data/processed/kmer_k2/escherichia_plasmid.csv",
+    "mat_F": "/files2/gerardo/KmerTopology/data/processed/kmer_k2/vectors_frec_escherichia.csv",
+    "kmer_size": 2,
+    "normalize": true,
+    "cannonical":false,
+    "header": false
+}
